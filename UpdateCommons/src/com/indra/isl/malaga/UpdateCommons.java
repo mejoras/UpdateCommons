@@ -126,6 +126,8 @@ public class UpdateCommons {
 
 			// Construimos el cliente con el usuario y password pasados como
 			// argumento
+			System.setProperty("org.apache.commons.logging.Log",
+					"org.apache.commons.logging.impl.NoOpLog");
 			client = new HttpClient();
 			client.getState().setCredentials(AuthScope.ANY,
 					new UsernamePasswordCredentials(user, pass));
@@ -159,7 +161,7 @@ public class UpdateCommons {
 
 							versionSetAux.add(version);
 						}
-						
+
 						versionSet = versionSetAux;
 						System.out.println("Actualizando [" + versions + "]");
 						// Descargamos el jar
@@ -344,9 +346,10 @@ public class UpdateCommons {
 						boolean valid = false;
 						while (!valid) {
 							String path = classPathFile.getAbsolutePath();
-							
-							String paths = path.substring(0, path.lastIndexOf(".classpath")-1);
-							
+
+							String paths = path.substring(0,
+									path.lastIndexOf(".classpath") - 1);
+
 							System.out
 									.println("Hay más de una opción para el classpath de "
 											+ paths);
@@ -494,7 +497,8 @@ public class UpdateCommons {
 	 * @param ruta
 	 * @param project
 	 */
-	private static void modifyCommons(SortedSet<String> fVersionSet, String[] files, String project) {
+	private static void modifyCommons(SortedSet<String> fVersionSet,
+			String[] files, String project) {
 		// modificar los commons de todos los proyectos
 		for (int i = 0; i < files.length; i++) {
 			File f = new File(files[i]);
@@ -502,7 +506,7 @@ public class UpdateCommons {
 			if (f.exists()) { // el fichero existe
 				File commonsFileTemp = new File(getCommonsTemp(files[i]));
 				// Modificamos el contenido del archivo
-				modifyCommonsFile(fVersionSet, project, f,commonsFileTemp);
+				modifyCommonsFile(fVersionSet, project, f, commonsFileTemp);
 
 			} else {
 				System.err.println(f.getName() + " no existe");
@@ -542,9 +546,8 @@ public class UpdateCommons {
 	 * @param commonsFileTemp
 	 */
 	@SuppressWarnings("resource")
-	private static void modifyCommonsFile(
-			SortedSet<String> fVersionSet, String project, File commonsFile,
-			File commonsFileTemp) {
+	private static void modifyCommonsFile(SortedSet<String> fVersionSet,
+			String project, File commonsFile, File commonsFileTemp) {
 		try {
 			FileReader fr;
 			BufferedReader br;
@@ -564,35 +567,35 @@ public class UpdateCommons {
 				if (s.contains(project + "_tag" + "=") && !s.startsWith("#")) {
 					// es el proyecto que estamos buscando
 					// y no es una línea comentada
-						String version = s.split("=")[1];
-						if (version == "") {
-							StringBuilder errorBuilder = new StringBuilder();
-							throw new RuntimeException(
-									errorBuilder
-											.append("El archivo ")
-											.append(commonsFile)
-											.append(" se encuentra no contiene versión para el commons: ")
-											.append(project).toString());
-						} else {
-							// se busca la versión correcta del commons
-							for (String fVersion : fVersionSet) {
-								if (fVersion.contains("-" + version)) {
-									// se ha encontrado la versión deseada
-									// cambiamos el texto contenido en la
-									// versión
-									version = fVersion;
-								}
+					String version = s.split("=")[1];
+					if (version == "") {
+						StringBuilder errorBuilder = new StringBuilder();
+						throw new RuntimeException(
+								errorBuilder
+										.append("El archivo ")
+										.append(commonsFile)
+										.append(" se encuentra no contiene versión para el commons: ")
+										.append(project).toString());
+					} else {
+						// se busca la versión correcta del commons
+						for (String fVersion : fVersionSet) {
+							if (fVersion.contains("-" + version)) {
+								// se ha encontrado la versión deseada
+								// cambiamos el texto contenido en la
+								// versión
+								version = fVersion;
 							}
 						}
-						// se actualiza la línea que contiene el texto
-						bw.write(project + "_tag=" + version);
+					}
+					// se actualiza la línea que contiene el texto
+					bw.write(project + "_tag=" + version);
 
 				} else {
 					bw.write(s);
 				}
 				bw.write("\n");
 			}
-			
+
 			br.close();
 			bw.close();
 
@@ -602,7 +605,7 @@ public class UpdateCommons {
 			// FileUtils.copyFileToDirectory(classPathFileTemp, classPathFile);
 
 			commonsFileTemp.delete();
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -651,27 +654,28 @@ public class UpdateCommons {
 	 * @throws FileNotFoundException
 	 */
 	private static void downloadJar(String version, String project) {
-		
+
 		downloadJarImpl(project, version, getJarName(version, project));
 		downloadJarImpl(project, version, getSourceJarName(version, project));
-		
+
 	}
 
-	private static void downloadJarImpl(String project, String version, String jarName) {
+	private static void downloadJarImpl(String project, String version,
+			String jarName) {
 		GetMethod method = null;
 		try {
 			method = new GetMethod(WEB + project + SLASH + version + SLASH
 					+ jarName);
 			// method = new GetMethod(WEB + project);
 			method.setDoAuthentication(true);
-			
+
 			client.executeMethod(method);
 			InputStream in = new BufferedInputStream(
 					method.getResponseBodyAsStream());
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(
-					new File(FOLDER_LIB_NEW + "/"+ jarName)));
+					new File(FOLDER_LIB_NEW + "/" + jarName)));
 			IOUtils.copy(in, out);
-			
+
 			out.close();
 			in.close();
 		} catch (MalformedURLException e) {
@@ -682,9 +686,9 @@ public class UpdateCommons {
 			e.printStackTrace();
 		} finally {
 			method.releaseConnection();
-			
+
 		}
-		
+
 	}
 
 	/**
@@ -699,9 +703,10 @@ public class UpdateCommons {
 	private static String getJarName(String version, String project) {
 		return project + "-" + version + ".jar";
 	}
-	
+
 	/**
-	 * Obtiene el nombre del fichero jar de los ficheros fuentes según versión y proyecto dados
+	 * Obtiene el nombre del fichero jar de los ficheros fuentes según versión y
+	 * proyecto dados
 	 * 
 	 * @param version
 	 *            Versión del fichero
