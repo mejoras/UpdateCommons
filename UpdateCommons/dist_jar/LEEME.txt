@@ -1,0 +1,20 @@
+1.- Crear una "External Tool Configurations" de tipo "Program"
+2.- Location (Ejemplo):
+	D:\Software\Herramientitas\UpdateCommons\UpdateCommons.bat
+3.- Arguments (Ejemplo)
+	%USER_SVN%
+	%PASS_SVN%
+	${workspace_loc}
+	${workspace_loc}/applications/sgc_client/sgc_client.properties
+	${workspace_loc}/applications/sgc_server/sgc_server.properties
+
+	//usuario de acceso al svn: https://slmaven.indra.es/nexus/#welcome
+	//contraseña de acceso al svn
+	//Ubicación del Workspace (No modificar)
+	//De 1 a N ficheros:
+		//Ubicación de los properties que se leerán para actualizar todo el WS.
+
+¡¡¡¡OJO!!!!
+Cuidado con las distintas versiones de commons que se ponen en los clientes,
+si se lanza en conjunto te preguntará cual usar en cada proyecto (en caso de conflicto),
+si se lanza de uno en uno, se quedará el último usado.
