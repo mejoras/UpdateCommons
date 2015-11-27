@@ -2,14 +2,16 @@
 2.- Location (Ejemplo):
 	D:\Software\Herramientitas\UpdateCommons\UpdateCommons.bat
 3.- Arguments (Ejemplo)
-	%USER_SVN%
-	%PASS_SVN%
+	https://slmaven.indra.es/nexus/content/repositories/davinci20/
+	Yes/no (ShouldSkipJarsAlreadyInLibs)
 	${workspace_loc}
 	${workspace_loc}/applications/sgc_client/sgc_client.properties
 	${workspace_loc}/applications/sgc_server/sgc_server.properties
 
+	//Ruta del repositorio
 	//usuario de acceso al svn: https://slmaven.indra.es/nexus/#welcome
 	//contraseña de acceso al svn
+	//Yes/No para no descargar las librerias que ya esten en la carpeta lib
 	//Ubicación del Workspace (No modificar)
 	//De 1 a N ficheros:
 		//Ubicación de los properties que se leerán para actualizar todo el WS.
@@ -18,3 +20,11 @@
 Cuidado con las distintas versiones de commons que se ponen en los clientes,
 si se lanza en conjunto te preguntará cual usar en cada proyecto (en caso de conflicto),
 si se lanza de uno en uno, se quedará el último usado.
+
+Cuidado opcion "no" (ShouldSkipJarsAlreadyInLibs) borrará todo el contenido de la carpeta libs!
+
+Cuidado las librerias externas en el fichero properties deben ir precedidas de la etiqueta
+"#EXT_LIBS" sino no se procesarán.
+
+Las librerias externas que se encuentren en los ficheros build.gradle del WS se cambiaran por etiquetas y se
+añadiran automaticamente al properties.
